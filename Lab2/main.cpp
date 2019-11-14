@@ -72,12 +72,7 @@ void CalculerV(int matriceTemporairePourV[5])
 
 int main() {
 
-    int CmoinsA[5][5];
-    int demandeMaximalesParProcessusIRessourceJ[5];
-
-    CalculerCmoinsA(CmoinsA);
-    CalculerV(demandeMaximalesParProcessusIRessourceJ);
-
+ 
 
 
 
