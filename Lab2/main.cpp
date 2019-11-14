@@ -69,6 +69,27 @@ bool ValiderDepassementRessources(int demandeCreation[5])
 	return true;
 }
 
+
+//Génère le vecteur aléatoire de demande de créatio des objes et le retourne
+vector<int> GenererVecteurDemandeCreationObjet()
+{
+
+    vector<int> DemandeCreationObjet vector<int>(5);
+
+    //loop pour remplir le vecteur
+    for(int x=0; x<5; x++)
+    {
+        int y=rand(0,6);
+        DemandeCreationObjet.at(x)=y;
+
+
+    }
+
+    return DemandeCreationObjet;
+
+}
+
+
 /**
 * @brief  Calcul le maximum d'objet d'un seul type que l'on peut creer avec les ressources
 * dans le systeme
@@ -168,6 +189,7 @@ void GenererA()
 	}
 }
 
+//Calcule case par case la différence entre demandeMaximal et allocation
 void CalculerCmoinsA(int matriceTemporairePourCmoinsA[5][5])
 {
 
@@ -182,6 +204,7 @@ void CalculerCmoinsA(int matriceTemporairePourCmoinsA[5][5])
 	}
 }
 
+//La somme de chaque colonne de la matrice allocation
 void CalculerV(int matriceTemporairePourV[5])
 {
 
