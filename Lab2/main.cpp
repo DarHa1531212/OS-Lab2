@@ -10,6 +10,49 @@ int compositionObjets[5][5] = {{2, 1, 0, 0, 0},
 							   {0, 0, 0, 4, 4},
 							   {2, 0, 0, 0, 1}};
 
+
+							   void CalculerCmoinsA(int matriceTemporairePourCmoinsA[5][5])
+{
+
+    for (int x = 0; x < 5; x++)
+    {
+
+        for (int y = 0; y < 5; y++)
+        {
+
+            matriceTemporairePourCmoinsA[x][y] = (demandeMaximale[x][y] - allocation[x][y]);
+
+        }
+
+    }
+
+}
+
+
+void CalculerV(int matriceTemporairePourV[5])
+{
+
+
+    for (int x = 0; x < 5; x++)
+    {
+
+        int sommeColonneMatriceAllocation=0;
+
+        for (int y = 0; y < 5; y++)
+        {
+
+            sommeColonneMatriceAllocation+=allocation[y][x];
+
+        }
+
+        matriceTemporairePourV[x]=ressourcesTotal[x]-sommeColonneMatriceAllocation;
+
+
+    }
+
+
+}
+
 /**
 * @brief  Calcul le maximum d'objet d'un seul type que l'on peut creer avec les ressources
 * dans le systeme
