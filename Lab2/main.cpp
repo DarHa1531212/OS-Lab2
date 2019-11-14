@@ -1,14 +1,73 @@
 #include <iostream>
 using namespace std;
 
-int ressourcesTotal[5] = {30, 20, 20, 60, 40};
+/*
+ * ressources totales disponibles dans le système
+ */
+int ressourcesTotales[5] = { 30, 20, 20, 60, 40 };
+
+
+/*
+ * ce que tu veux allouer pour chaque thread
+*/
 int allocation[5][5];
+
+/*
+ * les demandes maximales que tu peux faire pour chaque thread
+ * matrice C dans les notes de cours
+ */
 int demandeMaximal[5][5];
-int compositionObjets[5][5] = {{2, 1, 0, 0, 0},
-							   {0, 1, 1, 0, 0},
-							   {0, 0, 3, 2, 0},
-							   {0, 0, 0, 4, 4},
-							   {2, 0, 0, 0, 1}};
+
+/*
+ * Le nombre de ressources nécessaires pour la création de chaque objet
+ */
+int compositionObjets[5][5] = { {2, 1, 0, 0, 0},
+								{0, 1, 1, 0, 0},
+								{0, 0, 3, 2, 0},
+								{0, 0, 0, 4, 4},
+								{2, 0, 0, 0, 1} };
+
+
+/**
+ * @brief Vérifie si une demande de création d'objets peut dépasser les ressources maximales dans le système
+ *
+ * @param demandeCreation le nombre d'objets de chaque type devant être créé
+ * @return true: la demande ne dépasse pas les ressources du système
+ * @return false: la demande dépasse les ressources du système
+ */
+bool ValiderDepassementRessources(int demandeCreation[5])
+{
+	// les ressources sont dans l'ordre, le chaîne, le bois, le fer, l'or et le cuivre
+	int demandeRessourcesTotale[5] = { 0,0,0,0,0 };
+
+	//les ressources utilisées pour créer un baton, soit 2 chaîne et un bois
+	demandeRessourcesTotale[0] += 2 * demandeCreation[0];
+	demandeRessourcesTotale[1] += demandeCreation[0];
+
+	//les ressources utilisées pour créer une flèche, soit 1 bois et un fer
+	demandeRessourcesTotale[1] += demandeCreation[1];
+	demandeRessourcesTotale[2] += demandeCreation[1];
+
+	//les ressources utilisées pour créer une épé, soit 3 fer et 2 or
+	demandeRessourcesTotale[2] += 3 * demandeCreation[2];
+	demandeRessourcesTotale[3] += 2 * demandeCreation[2];
+
+	//les ressources utilisées pour créer une couronne, soit 4 or et 4 cuivre
+	demandeRessourcesTotale[3] += 4 * demandeCreation[3];
+	demandeRessourcesTotale[4] += 4 * demandeCreation[3];
+
+	//les ressources utilisées pour créer un bracelet, soit 1 cuivre et 2 chaîne
+	demandeRessourcesTotale[4] += demandeCreation[4];
+	demandeRessourcesTotale[0] += 2 * demandeCreation[4];
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (demandeRessourcesTotale[i] > ressourcesTotales[i])
+			return false;
+	}
+
+	return true;
+}
 
 /**
 * @brief  Calcul le maximum d'objet d'un seul type que l'on peut creer avec les ressources
@@ -30,7 +89,7 @@ int CalculerMaxObjetsPossiblePour1Thread(int noObjet, int nbrRessources)
 		}
 		else
 		{
-			objetsMaxTemp = (ressourcesTotal[i] / compositionObjets[noObjet][i]);
+			objetsMaxTemp = (ressourcesTotales[i] / compositionObjets[noObjet][i]);
 		}
 
 		if (maxObjets > objetsMaxTemp)
@@ -77,12 +136,12 @@ void CalculerDemandeMaximal(int nbrObjets, int nbrRessources)
 
 /**
  * @brief Génère l'état initial de la matrice A pour le début d'execution du programme
- * 
+ *
  */
 void GenererA()
 {
 
-	int ressourcesDispo[5] = {30, 20, 20, 60, 40};
+	int ressourcesDispo[5] = { 30, 20, 20, 60, 40 };
 	int matriceA[5][5];
 	int sommeRessourcesDemandees;
 	bool capaciteRespectee = false;
@@ -137,7 +196,7 @@ void CalculerV(int matriceTemporairePourV[5])
 			sommeColonneMatriceAllocation += allocation[y][x];
 		}
 
-		matriceTemporairePourV[x] = ressourcesTotal[x] - sommeColonneMatriceAllocation;
+		matriceTemporairePourV[x] = ressourcesTotales[x] - sommeColonneMatriceAllocation;
 	}
 }
 
