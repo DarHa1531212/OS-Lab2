@@ -1,10 +1,17 @@
 #include <iostream>
+#include <vector>
+
 using namespace std;
 
 /*
  * ressources totales disponibles dans le système
  */
 int ressourcesTotales[5] = { 30, 20, 20, 60, 40 };
+
+/**
+ * @brief  la cantité d'objets de chaque type créé. Le programme s'arrête lorsque au moins 20 objets de chaque type est créé
+ */
+int objetsCrees[5]= {0,0,0,0,0};
 
 
 /*
@@ -35,7 +42,7 @@ int compositionObjets[5][5] = { {2, 1, 0, 0, 0},
  * @return true: la demande ne dépasse pas les ressources du système
  * @return false: la demande dépasse les ressources du système
  */
-bool ValiderDepassementRessources(int demandeCreation[5])
+bool VerifierDepassementRessources(vector<int>  demandeCreation)
 {
 	// les ressources sont dans l'ordre, le chaîne, le bois, le fer, l'or et le cuivre
 	int demandeRessourcesTotale[5] = { 0,0,0,0,0 };
@@ -225,5 +232,17 @@ void CalculerV(int matriceTemporairePourV[5])
 int main()
 {
 
-	return 0;
+	// le programme jusqu'à ce que au moins 20 objets de chaque type aient été créés.
+	while (objetsCrees[0] < 20 ||objetsCrees[1] < 20 ||objetsCrees[2] < 20 ||objetsCrees[3] < 20 ||objetsCrees[4] < 20)
+	{
+		bool ressourcesRespectees = false;
+
+		while (!ressourcesRespectees)
+		{
+			vector<int>  vecteurDemandeCreationObjet = GenererVecteurDemandeCreationObjet();
+			ressourcesRespectees = VerifierDepassementRessources(vecteurDemandeCreationObjet);
+
+		}
+		// les ressources ne sont pas dépassées, appeler l'algorithme du banquier
+	}
 }
