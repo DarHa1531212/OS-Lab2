@@ -2,6 +2,7 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <cstring>
 
 using namespace std;
 
@@ -21,6 +22,9 @@ int objetsCrees[5] = {0, 0, 0, 0, 0};
 */
 int allocation[5][5];
 
+/**
+ * @brief  La liste des ressources non allouées disponibles dans le système
+ */
 int ressourcesNonAlloueesDiponible[5];
 
 /*
@@ -45,7 +49,6 @@ int compositionObjets[5][5] = {{2, 1, 0, 0, 0},
 
 /**
  * @brief Vérifie si une demande de création d'objets peut dépasser les ressources maximales dans le système
- *
  * @param demandeCreation le nombre d'objets de chaque type devant être créé
  * @return true: la demande ne dépasse pas les ressources du système
  * @return false: la demande dépasse les ressources du système
@@ -147,13 +150,13 @@ void AjouterDemandeMaxUnObjet(int maxObjet, int noObjet, int nbrRessources) {
 * @param  nbrObjets: Le nombre de type d'objets dans le systeme
 * @param  nbrRessources: Le nombre de type de ressources dans le systeme(pas la quantite)
 */
-void CalculerDemandeMaximal(int nbrObjets, int nbrRessources) {
+/*void CalculerDemandeMaximal(int nbrObjets, int nbrRessources) {
     for (int j = 0; j < nbrObjets; j++) {
         int maxObjetsJ = CalculerMaxObjetsPossiblePour1Thread(j, nbrRessources);
         AjouterDemandeMaxUnObjet(maxObjetsJ, j, nbrRessources);
     }
 }
-
+*/
 /**
  * @brief Génère l'état initial de la matrice A pour le début d'execution du programme
  *
@@ -233,13 +236,6 @@ void CopierMatrice5x5(int matriceOriginale[5][5], int copieMatrice[5][5]) {
     }
 }
 
-void CopierMatrice5x1(int matriceOriginale[5], int copieMatrice[5]) {
-    for (int x = 0; x < 5; x++) {
-
-        copieMatrice[x] = matriceOriginale[x];
-
-    }
-}
 
 /*
 * @brief  Calcul la demande maximal en ressources de chaque objets selon les ressources totales
@@ -247,156 +243,6 @@ void CopierMatrice5x1(int matriceOriginale[5], int copieMatrice[5]) {
 * @param  nbrObjets: Le nombre de type d'objets dans le systeme
 * @param  nbrRessources: Le nombre de type de ressources dans le systeme(pas la quantite)
 */
-/*bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication)
-{
-
-    int copieMatriceCmoinsA[5][5];
-    int copieMatriceRessourcesNonAlloueesDisponible[5];
-
-    int nombreLignesMarquees=0;
-    int nombreLignesMarqueesLoop=0;
-
-
-    queue<int> lignesMarqueesNonLiberees;*/
-
-
-
-
-
-
-/*
- * True si sécuritaire et false si ce n'est pas sécuritaire.
- * Peut varié entre true et false durant l'exécution de la boucle mais
- * c'est le résultat à la sortie de la double boucle qui donne le verdict.
- */
-/* bool verifierSiSecuritaire=true;
- bool finAlgo=false;
-
-
- //on travaille avec une copie mais je suis pas sûr que c'est nécessaire
- CopierMatrice5x5(matriceCmoinsA,copieMatriceCmoinsA);
- CopierMatrice5x1(ressourcesNonAlloueesDiponible,copieMatriceRessourcesNonAlloueesDisponible);
-
- //Tant que la pile contient quelque chose on boucle
- do
- {
-     for(int x=0;x<5;x++)
-     {
-
-         for(int y=0; y<5;y++)
-         {
-             //Si la ligne n'est pas marquée
-             if(copieMatriceCmoinsA[x][y]!=-999)
-             {
-                 if (copieMatriceCmoinsA[x][y] > copieMatriceRessourcesNonAlloueesDisponible[y]) {
-                     verifierSiSecuritaire = false;*/
-
-/*
- * La ligne n'est pas sécuritaire, donc on sort de la loop pour trouver si une autre ligne est correcte
- */
-/*break;
-}
-}
-else
-{
-break;//on saute la ligne si elle est marquée
-}
-
-
-}
-
-//Si la ligne de C-A est <= V, on la met dans la fille,
-//on incrémente les compteurs et on marque la ligne
-if(verifierSiSecuritaire==true and copieMatriceCmoinsA[x][0]!=-999)
-{
-nombreLignesMarquees++;
-nombreLignesMarqueesLoop++;
-lignesMarqueesNonLiberees.push(x);
-
-//une ligne contenant que des -999 est une ligne marquée
-for(int y=0;y<5;y++)
-{
-copieMatriceCmoinsA[x][y]=-999;
-}
-
-}
-
-
-}
-
-//si on a marqué des lignes durant l'itération du double for
-if (nombreLignesMarqueesLoop!=0)
-{
-
-//si on ne trouve pas d'autre ligne à marquer, on libère les ressources de la première ligne marquée
-// qui est dans la file.
-if(!lignesMarqueesNonLiberees.empty())
-{
-ordreFabrication.push(lignesMarqueesNonLiberees.front());
-verifierSiSecuritaire=true;//pas sure si nécessaire
-
-lignesMarqueesNonLiberees.pop();
-
-for(int x=0; x<5;x++)
-{
-copieMatriceRessourcesNonAlloueesDisponible[x]+=matriceCmoinsA[ordreFabrication.back()][x];
-}
-
-
-}
-else
-{
-verifierSiSecuritaire=false;
-finAlgo=true;
-}
-
-
-}
-else
-{
-//Pour la première itération, on libère le première processus et on le met dans V
-if(ordreFabrication.empty())
-{
-ordreFabrication.push(lignesMarqueesNonLiberees.front());
-verifierSiSecuritaire=true;// on remet true avant de réitérer réitérer
-lignesMarqueesNonLiberees.pop();
-
-//boucle pour ajouter les ressources de la ligne marquée qui est sur le dessus
-//de la pile, dans V
-
-for(int x=0; x<5;x++)
-{
-copieMatriceRessourcesNonAlloueesDisponible[x]+=matriceCmoinsA[ordreFabrication.front()][x];
-}
-}
-nombreLignesMarqueesLoop=0;
-}
-
-if(nombreLignesMarquees==5)
-{
-finAlgo=true;
-verifierSiSecuritaire=true;
-
-//on vérifie s'il reste des lignes qui n'on pas été ajouté à l'ordre.
-while(!lignesMarqueesNonLiberees.empty())
-{
-ordreFabrication.push(lignesMarqueesNonLiberees.front());
-lignesMarqueesNonLiberees.pop();// supression du premier éléments
-}
-
-}
-
-
-
-}while(finAlgo==false);
-
-
-return verifierSiSecuritaire;
-
-}
-*/
-
-
 
 bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication)
 {
@@ -404,11 +250,15 @@ bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication
     int copieMatriceRessourcesNonAlloueesDisponible[5];
 
     int nombreLignesMarqueesLoop = 0;
+    int tailleMatriceCMoinsA = 25;
 
     bool verifierSiSecuritaire = true;
 
     CopierMatrice5x5(matriceCmoinsA, copieMatriceCmoinsA);
-    CopierMatrice5x1(ressourcesNonAlloueesDiponible, copieMatriceRessourcesNonAlloueesDisponible);
+    
+    copy(begin (matriceCmoinsA[0][0]), end (matriceCmoinsA[0][0]+25), begin (copieMatriceCmoinsA[0][0]));
+
+    copy(begin(ressourcesNonAlloueesDiponible), end (ressourcesNonAlloueesDiponible), begin(copieMatriceRessourcesNonAlloueesDisponible));
 
     do
     {
