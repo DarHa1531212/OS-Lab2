@@ -271,12 +271,12 @@ void CopierMatrice5x5(int matriceOriginale[5][5], int copieMatrice[5][5]) {
 }
 
 
-void EcrireMatricesDansFichier(ofstream &traceExecution, int matriceCmoinsA[5][5])
+void EcrireMatricesDansFichier(ofstream &traceExecution, int matriceCmoinsA[5][5], int ressourcesNonAllouees[5])
 {
     traceExecution << "Matrice Ressources non alloues\n";
     for (int i = 0; i < 5; i++)
     {
-        traceExecution << ressourcesNonAlloueesDiponible[i] << "   ";
+        traceExecution << ressourcesNonAllouees[i] << "   ";
     }
     traceExecution << "\n\nC - A\n";
     for (int i = 0; i < 5; i++)
@@ -325,7 +325,7 @@ bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication
         for (int x = 0; x < nombreObjets; x++)
         {
             verifierSiSecuritaire = true;
-            EcrireMatricesDansFichier(traceExecution, copieMatriceCmoinsA);
+            EcrireMatricesDansFichier(traceExecution, copieMatriceCmoinsA, copieMatriceRessourcesNonAlloueesDisponible);
             for (int y = 0; y < nombreObjets; y++)
             {
                 //Si la ligne n'est pas marquée
