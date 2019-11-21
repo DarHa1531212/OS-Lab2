@@ -2,8 +2,13 @@
 #include <vector>
 #include <stack>
 #include <queue>
+#include <thread>
+#include <chrono>
+#include <fstream>
 
 using namespace std;
+
+string nomDesObjets[5] = {"Baton", "Fleche", "Epee", "Couronne", "Bracelet"};
 
 /*
  * ressources totales disponibles dans le système
@@ -42,6 +47,35 @@ int compositionObjets[5][5] = {{2, 1, 0, 0, 0},
                                {0, 0, 0, 4, 4},
                                {2, 0, 0, 0, 1}};
 
+
+void AfficherVecteur1Dimension(vector<int> vecteur) 
+{
+    for (int x = 0; x < vecteur.size(); x++) 
+	{
+        cout << vecteur[x] << "\t";
+    }
+}
+
+void AfficherTableauInt5Par5(int tableau[5][5]) 
+{
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            cout << tableau[i][j] << "\t";
+        }
+        cout << "\n";
+    }
+}
+
+void AfficherTableauInt(int tableau[], int nbrElement)
+{
+	for (int i = 0; i < nbrElement; i++)
+	{
+		cout << tableau[i] << "\t";
+	}
+	
+}
 
 /**
  * @brief Vérifie si une demande de création d'objets peut dépasser les ressources maximales dans le système
@@ -241,167 +275,40 @@ void CopierMatrice5x1(int matriceOriginale[5], int copieMatrice[5]) {
     }
 }
 
-/*
-* @brief  Calcul la demande maximal en ressources de chaque objets selon les ressources totales
-* @note   matrice C dans les exemples du professeur
-* @param  nbrObjets: Le nombre de type d'objets dans le systeme
-* @param  nbrRessources: Le nombre de type de ressources dans le systeme(pas la quantite)
-*/
-/*bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication)
+void EcrireMatricesDansFichier(ofstream &traceExecution, int matriceCmoinsA[5][5])
 {
-
-    int copieMatriceCmoinsA[5][5];
-    int copieMatriceRessourcesNonAlloueesDisponible[5];
-
-    int nombreLignesMarquees=0;
-    int nombreLignesMarqueesLoop=0;
-
-
-    queue<int> lignesMarqueesNonLiberees;*/
-
-
-
-
-
-
-/*
- * True si sécuritaire et false si ce n'est pas sécuritaire.
- * Peut varié entre true et false durant l'exécution de la boucle mais
- * c'est le résultat à la sortie de la double boucle qui donne le verdict.
- */
-/* bool verifierSiSecuritaire=true;
- bool finAlgo=false;
-
-
- //on travaille avec une copie mais je suis pas sûr que c'est nécessaire
- CopierMatrice5x5(matriceCmoinsA,copieMatriceCmoinsA);
- CopierMatrice5x1(ressourcesNonAlloueesDiponible,copieMatriceRessourcesNonAlloueesDisponible);
-
- //Tant que la pile contient quelque chose on boucle
- do
- {
-     for(int x=0;x<5;x++)
-     {
-
-         for(int y=0; y<5;y++)
-         {
-             //Si la ligne n'est pas marquée
-             if(copieMatriceCmoinsA[x][y]!=-999)
-             {
-                 if (copieMatriceCmoinsA[x][y] > copieMatriceRessourcesNonAlloueesDisponible[y]) {
-                     verifierSiSecuritaire = false;*/
-
-/*
- * La ligne n'est pas sécuritaire, donc on sort de la loop pour trouver si une autre ligne est correcte
- */
-/*break;
-}
-}
-else
-{
-break;//on saute la ligne si elle est marquée
+    traceExecution << "Matrice Ressources non alloues\n";
+    for (int i = 0; i < 5; i++)
+    {
+        traceExecution << ressourcesNonAlloueesDiponible[i] << "   ";
+    }
+    traceExecution << "\n\nC - A\n";
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            traceExecution << matriceCmoinsA[i][j] << "   ";
+        }
+        traceExecution << "\n";
+    }
+    traceExecution << "\nAllocation ressources\n";
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            traceExecution << allocation[i][j] << "   ";
+        }
+        traceExecution << "\n";
+    }
+    traceExecution << "\n------------------\n\n";
 }
 
 
-}
-
-//Si la ligne de C-A est <= V, on la met dans la fille,
-//on incrémente les compteurs et on marque la ligne
-if(verifierSiSecuritaire==true and copieMatriceCmoinsA[x][0]!=-999)
-{
-nombreLignesMarquees++;
-nombreLignesMarqueesLoop++;
-lignesMarqueesNonLiberees.push(x);
-
-//une ligne contenant que des -999 est une ligne marquée
-for(int y=0;y<5;y++)
-{
-copieMatriceCmoinsA[x][y]=-999;
-}
-
-}
-
-
-}
-
-//si on a marqué des lignes durant l'itération du double for
-if (nombreLignesMarqueesLoop!=0)
-{
-
-//si on ne trouve pas d'autre ligne à marquer, on libère les ressources de la première ligne marquée
-// qui est dans la file.
-if(!lignesMarqueesNonLiberees.empty())
-{
-ordreFabrication.push(lignesMarqueesNonLiberees.front());
-verifierSiSecuritaire=true;//pas sure si nécessaire
-
-lignesMarqueesNonLiberees.pop();
-
-for(int x=0; x<5;x++)
-{
-copieMatriceRessourcesNonAlloueesDisponible[x]+=matriceCmoinsA[ordreFabrication.back()][x];
-}
-
-
-}
-else
-{
-verifierSiSecuritaire=false;
-finAlgo=true;
-}
-
-
-}
-else
-{
-//Pour la première itération, on libère le première processus et on le met dans V
-if(ordreFabrication.empty())
-{
-ordreFabrication.push(lignesMarqueesNonLiberees.front());
-verifierSiSecuritaire=true;// on remet true avant de réitérer réitérer
-lignesMarqueesNonLiberees.pop();
-
-//boucle pour ajouter les ressources de la ligne marquée qui est sur le dessus
-//de la pile, dans V
-
-for(int x=0; x<5;x++)
-{
-copieMatriceRessourcesNonAlloueesDisponible[x]+=matriceCmoinsA[ordreFabrication.front()][x];
-}
-}
-nombreLignesMarqueesLoop=0;
-}
-
-if(nombreLignesMarquees==5)
-{
-finAlgo=true;
-verifierSiSecuritaire=true;
-
-//on vérifie s'il reste des lignes qui n'on pas été ajouté à l'ordre.
-while(!lignesMarqueesNonLiberees.empty())
-{
-ordreFabrication.push(lignesMarqueesNonLiberees.front());
-lignesMarqueesNonLiberees.pop();// supression du premier éléments
-}
-
-}
-
-
-
-}while(finAlgo==false);
-
-
-return verifierSiSecuritaire;
-
-}
-*/
-
-
-
-bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication)
+bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication, ofstream &traceExecution)
 {
     int copieMatriceCmoinsA[5][5];
     int copieMatriceRessourcesNonAlloueesDisponible[5];
+    int nombreObjets = 5;
 
     int nombreLignesMarqueesLoop = 0;
 
@@ -413,19 +320,17 @@ bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication
     do
     {
         nombreLignesMarqueesLoop = 0;
-        for (int x = 0; x < 5; x++)
-
+        for (int x = 0; x < nombreObjets; x++)
         {
             verifierSiSecuritaire = true;
-
-            for (int y = 0; y < 5; y++)
+            EcrireMatricesDansFichier(traceExecution, copieMatriceCmoinsA);
+            for (int y = 0; y < nombreObjets; y++)
             {
                 //Si la ligne n'est pas marquée
                 if (copieMatriceCmoinsA[x][y] != -999) {
                     if (copieMatriceCmoinsA[x][y] > copieMatriceRessourcesNonAlloueesDisponible[y])
                     {
                         verifierSiSecuritaire = false;
-
                         /*
                          * La ligne n'est pas sécuritaire, donc on sort de la loop pour trouver si une autre ligne est correcte
                          */
@@ -448,20 +353,26 @@ bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication
 
                 nombreLignesMarqueesLoop++;
                 ordreFabrication.push(x);
+				cout << "Ressources allouees a l'objet " + nomDesObjets[x] + ", l'etat est securitaire.\n";
+				cout << "L'objet " + nomDesObjets[x] + " consomme les ressources.\n";
+				chrono::seconds dura(2);
+				this_thread::sleep_for(dura);
 
                 //libère les ressources allouées pour cette ligne
                 for (int y = 0; y < 5; y++) {
                     copieMatriceRessourcesNonAlloueesDisponible[y] += allocation[x][y];
-
-
+                    allocation[x][y] = 0;
                 }
-
 
                 //une ligne contenant que des -999 est une ligne marquée
                 for (int y = 0; y < 5; y++) {
                     copieMatriceCmoinsA[x][y] = -999;
                 }
 
+				cout << "L'objet " + nomDesObjets[x] + " a ete complete.\n";
+				cout << "vecteur de ressources disponible: ";
+				AfficherTableauInt(copieMatriceRessourcesNonAlloueesDisponible, 5);
+				cout << "\n\n\n";
             }
 
 
@@ -488,48 +399,57 @@ bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication
     return retournerSiSecuritaire;
 }
 
-void imprimerOrdreFabrication(queue<int> &ordreFabrication) {
+void imprimerOrdreFabrication(queue<int> &ordreFabrication, ofstream &traceExecution) {
 
     cout << "Ordre de fabrication: " << "\n";
+    traceExecution << "Ordre de fabrication: " << "\n";
 
     //Affichage puis supression de l'élément dans la file
     while (!ordreFabrication.empty()) {
-        cout << ordreFabrication.front() << "\t";
+        cout << nomDesObjets[ordreFabrication.front()] << "\t";
+        traceExecution << nomDesObjets[ordreFabrication.front()] << "\t";
         ordreFabrication.pop();
     }
-    cout << endl;
-
+    cout << "+++++++++++++++++++++++++++++++++++++++++++++\n\n";
+    traceExecution << "\n\n";
 }
 
 
-void AjouterObjetCree(vector<int> vecteurDemandeCreationObjet) {
-
+void AjouterEtImprimerObjetCree(vector<int> vecteurDemandeCreationObjet, ofstream &traceExecution) 
+{
     for (int x = 0; x < 5; x++) {
-
         objetsCrees[x] += vecteurDemandeCreationObjet[x];
-
-
     }
 
+    traceExecution << "nombre total d'objets dans le systeme\n";
+    for (int i = 0; i < 5; i++)
+    {
+        traceExecution << nomDesObjets[i] << ": " << objetsCrees[i] << "   ";
+    }
+
+    traceExecution << endl << endl;
 
 }
 
-
-void AfficherVecteurDemandeCreationObjet(vector<int> vecteurDemandeCreationObjet) {
-
-    for (int x = 0; x < vecteurDemandeCreationObjet.size(); x++) {
-
-        cout << vecteurDemandeCreationObjet[x] << "\t";
-
+void EcrireNombreObjetsACreerDansFichier(vector<int> nombreObjetsACreer, ofstream &traceExecution)
+{
+    traceExecution << "Nombre d'objets a crees dans cette iteration\n";
+    for (int i = 0; i < 5; i++)
+    {
+        traceExecution << nomDesObjets[i] << ": " << nombreObjetsACreer[i] << "   ";
     }
-
+    traceExecution << endl << endl;   
 }
 
 int main() {
+    auto start = chrono::system_clock::now();
+
     bool etatsecuritaire;
     queue<int> ordreFabricationObjets;
     int matriceDemandeMaxMoinsAlloue[5][5];
     vector<int> vecteurDemandeCreationObjet;
+    ofstream traceExecution;
+    traceExecution.open("traceExecution.txt", ios::out);
 
 // le programme jusqu'à ce que au moins 20 objets de chaque type aient été créés.
     while (objetsCrees[0] < 20 || objetsCrees[1] < 20 || objetsCrees[2] < 20 || objetsCrees[3] < 20 ||
@@ -544,21 +464,32 @@ int main() {
             //Si false on va reboucler, donc affichage que la demande est rejeté, car excède les ressources
             if (ressourcesRespectees == false) {
                 cout << "Demande ";
-                AfficherVecteurDemandeCreationObjet((vecteurDemandeCreationObjet));
-                cout << "rejetee, car excede les ressources." << "\n";
+                AfficherVecteur1Dimension((vecteurDemandeCreationObjet));
+                cout << "rejetee, car excede les ressources.\n";
             }
         }
         CalculerCmoinsA(matriceDemandeMaxMoinsAlloue);
         CalculerV(ressourcesNonAlloueesDiponible);
 
 // les ressources ne sont pas dépassées, appeler l'algorithme du banquier
-        etatsecuritaire = AlgorithmeDuBanquier(matriceDemandeMaxMoinsAlloue, ordreFabricationObjets);
+        EcrireNombreObjetsACreerDansFichier(vecteurDemandeCreationObjet, traceExecution);
+        etatsecuritaire = AlgorithmeDuBanquier(matriceDemandeMaxMoinsAlloue, ordreFabricationObjets, traceExecution);
         if (etatsecuritaire) {
-            imprimerOrdreFabrication(ordreFabricationObjets);
-            AjouterObjetCree(vecteurDemandeCreationObjet);
+            imprimerOrdreFabrication(ordreFabricationObjets, traceExecution);
+            AjouterEtImprimerObjetCree(vecteurDemandeCreationObjet, traceExecution);
+        } else 
+        {
+            cout << "La demande d'objet ";
+            AfficherVecteur1Dimension(vecteurDemandeCreationObjet);
+            cout << " est rejete car elle n'est pas securitaire\n\n";
+            cout << "***********************************************\n\n";
         }
 
-
+        traceExecution << "*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+\n";
     }
+    auto end = std::chrono::system_clock::now();
+	chrono::duration<double> tempsExecution = end-start;	
+	traceExecution << "\n\nL'execution est termine. Le temps d'execution est de " << tempsExecution.count() << " secondes." << "\n\n\n";
+    traceExecution.close();
     return 0;
 }
