@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 #include <fstream>
+#include <cstring>
 
 using namespace std;
 
@@ -26,6 +27,9 @@ int objetsCrees[5] = {0, 0, 0, 0, 0};
 */
 int allocation[5][5];
 
+/**
+ * @brief  La liste des ressources non allouées disponibles dans le système
+ */
 int ressourcesNonAlloueesDiponible[5];
 
 /*
@@ -79,7 +83,6 @@ void AfficherTableauInt(int tableau[], int nbrElement)
 
 /**
  * @brief Vérifie si une demande de création d'objets peut dépasser les ressources maximales dans le système
- *
  * @param demandeCreation le nombre d'objets de chaque type devant être créé
  * @return true: la demande ne dépasse pas les ressources du système
  * @return false: la demande dépasse les ressources du système
@@ -181,13 +184,13 @@ void AjouterDemandeMaxUnObjet(int maxObjet, int noObjet, int nbrRessources) {
 * @param  nbrObjets: Le nombre de type d'objets dans le systeme
 * @param  nbrRessources: Le nombre de type de ressources dans le systeme(pas la quantite)
 */
-void CalculerDemandeMaximal(int nbrObjets, int nbrRessources) {
+/*void CalculerDemandeMaximal(int nbrObjets, int nbrRessources) {
     for (int j = 0; j < nbrObjets; j++) {
         int maxObjetsJ = CalculerMaxObjetsPossiblePour1Thread(j, nbrRessources);
         AjouterDemandeMaxUnObjet(maxObjetsJ, j, nbrRessources);
     }
 }
-
+*/
 /**
  * @brief Génère l'état initial de la matrice A pour le début d'execution du programme
  *
@@ -267,13 +270,6 @@ void CopierMatrice5x5(int matriceOriginale[5][5], int copieMatrice[5][5]) {
     }
 }
 
-void CopierMatrice5x1(int matriceOriginale[5], int copieMatrice[5]) {
-    for (int x = 0; x < 5; x++) {
-
-        copieMatrice[x] = matriceOriginale[x];
-
-    }
-}
 
 void EcrireMatricesDansFichier(ofstream &traceExecution, int matriceCmoinsA[5][5])
 {
@@ -303,7 +299,12 @@ void EcrireMatricesDansFichier(ofstream &traceExecution, int matriceCmoinsA[5][5
     traceExecution << "\n------------------\n\n";
 }
 
-
+/*
+* @brief  Calcul la demande maximal en ressources de chaque objets selon les ressources totales
+* @note   matrice C dans les exemples du professeur
+* @param  nbrObjets: Le nombre de type d'objets dans le systeme
+* @param  nbrRessources: Le nombre de type de ressources dans le systeme(pas la quantite)
+*/
 bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication, ofstream &traceExecution)
 {
     int copieMatriceCmoinsA[5][5];
@@ -311,11 +312,12 @@ bool AlgorithmeDuBanquier(int matriceCmoinsA[5][5], queue<int> &ordreFabrication
     int nombreObjets = 5;
 
     int nombreLignesMarqueesLoop = 0;
+    int tailleMatriceCMoinsA = 25;
 
     bool verifierSiSecuritaire = true;
 
     CopierMatrice5x5(matriceCmoinsA, copieMatriceCmoinsA);
-    CopierMatrice5x1(ressourcesNonAlloueesDiponible, copieMatriceRessourcesNonAlloueesDisponible);
+    copy(begin(ressourcesNonAlloueesDiponible), end (ressourcesNonAlloueesDiponible), begin(copieMatriceRessourcesNonAlloueesDisponible));
 
     do
     {
